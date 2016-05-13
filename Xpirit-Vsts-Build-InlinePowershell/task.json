@@ -10,12 +10,20 @@
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 4
+    "Patch": 5
   },
   "demands": [ ],
   "minimumAgentVersion": "1.90.0",
 
   "inputs": [
+    {
+        "name": "arguments",
+        "type": "string",
+        "label": "Arguments",
+        "defaultValue": "",
+        "required": false,
+        "helpMarkDown": "Arguments passed to the PowerShell script.  Either ordinal parameters or named parameters"
+    },
     {
       "name": "Script",
       "type": "multiLine",
@@ -25,7 +33,7 @@
       "helpMarkDown": "Write all your thoughts in powershell in this textbox",
       "properties": {
         "resizable": true,
-        "rows" : "15"
+        "rows": "15"
       }
     }
   ],
@@ -33,7 +41,7 @@
   "execution": {
     "PowerShell": {
       "target": "$(currentDirectory)\\InlinePowershell.ps1",
-      "argumentFormat": "",
+      "argumentFormat": "$(arguments)",
       "workingDirectory": "$(Build.SourcesDirectory)"
     }
   }

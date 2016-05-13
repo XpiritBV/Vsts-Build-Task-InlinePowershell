@@ -10,7 +10,7 @@
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 4
+    "Patch": 5
   },
   "demands": [ "azureps" ],
   "minimumAgentVersion": "1.95.0",
@@ -46,10 +46,18 @@
       "visibleRule": "ConnectedServiceNameSelector = ConnectedServiceNameARM"
     },
     {
+        "name": "arguments",
+        "type": "string",
+        "label": "Arguments",
+        "defaultValue": "",
+        "required": false,
+        "helpMarkDown": "Arguments passed to the PowerShell script.  Either ordinal parameters or named parameters"
+    },
+    {
       "name": "Script",
       "type": "multiLine",
       "label": "Script to run",
-      "defaultValue": "Write-Output 'Hello world",
+      "defaultValue": "Write-Output 'Hello world'",
       "required": true,
       "helpMarkDown": "Write all your thoughts in powershell in this textbox to run it in Azure Powershell",
       "properties": {
@@ -62,7 +70,7 @@
   "execution": {
     "AzurePowerShell": {
       "target": "$(currentDirectory)\\InlineAzurePowershell.ps1",
-      "argumentFormat": "",
+      "argumentFormat": "$(arguments)",
       "workingDirectory": "$(Build.SourcesDirectory)"
     }
   }
