@@ -1,18 +1,18 @@
 Param(
-    [String] [Parameter(Mandatory = $true)] $ConnectedServiceNameSelector,    
+    [String] [Parameter(Mandatory = $true)] $ConnectedServiceNameSelector,
     [String] $ConnectedServiceName,
-    [String] $ConnectedServiceNameARM, 
+    [String] $ConnectedServiceNameARM,
     [string] $Script,
 	[string] $ScriptArguments
 )
 
-$scriptPath =  [System.IO.Path]::GetTempFileName().Replace(".tmp",".ps1")
+$scriptPath = Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath "$([System.Guid]::NewGuid().Guid).ps1"
 $script >> $scriptPath
 
 if (-not (get-command 'Import-VstsLocStrings'  -ErrorAction SilentlyContinue))
 {
     $parametershash = $PSBoundParameters
-    
+
     function Import-VstsLocStrings{
         Write-Output 'Import-VstsLocStrings'
     }
@@ -37,7 +37,7 @@ if (-not (get-command 'Import-VstsLocStrings'  -ErrorAction SilentlyContinue))
         [switch]$Require,
         [switch]$AsBool,
         [switch]$AsInt)
-        
+
         $result = $parametershash[$Name]
 
          # Write error if required.
@@ -132,5 +132,9 @@ $global:ErrorActionPreference = 'Continue'
         # Set the task result to failed if the object is an error record.
         if ($_ -is [System.Management.Automation.ErrorRecord]) {
             "##vso[task.complete result=Failed]"
+        }
+
+        if ([System.IO.File]::Exists($scriptPath)) {
+            [System.IO.File]::Delete($scriptPath)
         }
     }

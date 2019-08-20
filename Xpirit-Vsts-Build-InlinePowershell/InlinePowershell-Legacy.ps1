@@ -5,14 +5,14 @@ Param(
 
 
 
-$scriptPath =  [System.IO.Path]::GetTempFileName().Replace(".tmp",".ps1")
+$scriptPath =  Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath "$([System.Guid]::NewGuid().Guid).ps1"
 $script >> $scriptPath
 
 
 if (-not (get-command 'Import-VstsLocStrings'  -ErrorAction SilentlyContinue))
 {
     $parametershash = $PSBoundParameters
-    
+
     function Import-VstsLocStrings{
         Write-Output 'Import-VstsLocStrings'
     }
@@ -37,7 +37,7 @@ if (-not (get-command 'Import-VstsLocStrings'  -ErrorAction SilentlyContinue))
         [switch]$Require,
         [switch]$AsBool,
         [switch]$AsInt)
-        
+
         $result = $parametershash[$Name]
 
          # Write error if required.
@@ -98,7 +98,7 @@ Remove-Variable -Name scriptArguments
 Get-ChildItem -LiteralPath function: |
     Where-Object {
         ($_.ModuleName -eq 'VstsTaskSdk' -and $_.Name -ne 'Out-Default') -or
-        ($_.Name -eq 'Invoke-VstsTaskScript') 
+        ($_.Name -eq 'Invoke-VstsTaskScript')
     } |
     Remove-Item
 
@@ -130,5 +130,8 @@ $global:ErrorActionPreference = 'Continue'
         if ($_ -is [System.Management.Automation.ErrorRecord]) {
             "##vso[task.complete result=Failed]"
         }
+
+        if ([System.IO.File]::Exists($scriptPath)) {
+            [System.IO.File]::Delete($scriptPath)
+        }
     }
- 

@@ -5,7 +5,7 @@ $script = Get-VstsInput -Name Script -Require
 $scriptArguments = Get-VstsInput -Name ScriptArguments
 
 
-$scriptPath =  [System.IO.Path]::GetTempFileName().Replace(".tmp",".ps1")
+$scriptPath = Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath "$([System.Guid]::NewGuid().Guid).ps1"
 $script >> $scriptPath
 
 if ($scriptArguments -match '[\r\n]') {
@@ -59,5 +59,9 @@ $global:ErrorActionPreference = 'Continue'
         # Set the task result to failed if the object is an error record.
         if ($_ -is [System.Management.Automation.ErrorRecord]) {
             "##vso[task.complete result=Failed]"
+        }
+
+        if ([System.IO.File]::Exists($scriptPath)) {
+            [System.IO.File]::Delete($scriptPath)
         }
     }
